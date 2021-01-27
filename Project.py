@@ -24,7 +24,8 @@ screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Zmeyka on Python')
 clock = pygame.time.Clock()
 
-def load_image(name):
+
+def load_image(name):                                                       # Функция загрузки картинки
     fullname = name
     # если файл не существует, то выходим
     if not os.path.isfile(fullname):
@@ -33,21 +34,25 @@ def load_image(name):
     image = pygame.image.load(fullname)
     return image
 
-def your_score(score):                                                      #Счетчик очков
-    score_font = pygame.font.SysFont("calibri", 35)                         #Ввод шрифта для письма
+
+def your_score(score):                                                      # Счетчик очков
+    score_font = pygame.font.SysFont("calibri", 35)                         # Ввод шрифта для письма
     value = score_font.render("Score: " + str(score), True, (0, 0, 0))
     screen.blit(value, [0, 0])
 
-def drawing_snake(snake_block, snake_list):                                 #Функция отрисовки змеи
+
+def drawing_snake(snake_block, snake_list):                                 # Функция отрисовки змеи
     for x in snake_list:
         pygame.draw.rect(screen, (0, 0, 0), [x[0], x[1], snake_block, snake_block])
 
-def pr(tex, color):                                                         #Функция вывода текста(любого)
+
+def pr(tex, color):                                                         # Функция вывода текста(любого)
     font_style = pygame.font.SysFont("calibri", 25)                         # Ввод шрифтадля письма
     txt = font_style.render(tex, True, color)
     screen.blit(txt, [10, 50])
 
-def gameLoop():                 #игра
+
+def gameLoop():                 # игра
     global screen
     if diff == 'легко':
         width = 720  # Размеры окна
@@ -82,6 +87,7 @@ def gameLoop():                 #игра
     snake_List = []
     Length_of_snake = 1
 
+    # Генерация еды и бомб
     food_x = round(random.randrange(snake_block, width - snake_block - 10) / 10.0) * 10.0
     food_y = round(random.randrange(snake_block, height - snake_block - 10) / 10.0) * 10.0
     while food_x < 35 or food_y < 20:
@@ -107,6 +113,7 @@ def gameLoop():                 #игра
         bomb_y3 = round(random.randrange(snake_block, height - snake_block - 10) / 10.0) * 10.0
 
     while not closing_with_X:
+        # Логика окончания игры
         while menu:
             screen.fill((255, 255, 255))
             screen = pygame.display.set_mode((720, 200))
@@ -122,6 +129,7 @@ def gameLoop():                 #игра
                     if event.key == pygame.K_r:
                         gameLoop()
 
+        # Обработка ввода с клавиатуры
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 closing_with_X = True
@@ -141,6 +149,7 @@ def gameLoop():                 #игра
                 if event.key == pygame.K_SPACE:
                     time.sleep(5)
 
+        # Создание спрайтов
         all_sprites = pygame.sprite.Group()
         bomb = pygame.sprite.Sprite(all_sprites)
         bomb.image = pygame.transform.scale(load_image("bomb.png"), (20, 20))
@@ -155,6 +164,7 @@ def gameLoop():                 #игра
         bomb3.rect = bomb3.image.get_rect()
         food.rect = food.image.get_rect()
 
+        # Пересечение с краями
         screen = pygame.display.set_mode((width, height))
         if x1 >= width or x1 < 0 or y1 >= height or y1 < 0:
             menu = True
@@ -162,6 +172,7 @@ def gameLoop():                 #игра
         y1 += y1_change
         screen.fill((255, 255, 255))
 
+        # Координаты еды и бомб
         bomb.rect.x = bomb_x
         bomb.rect.y = bomb_y
 
@@ -187,6 +198,8 @@ def gameLoop():                 #игра
         drawing_snake(snake_block, snake_List)
         your_score(Length_of_snake - 1)
         pygame.display.update()
+
+        # Логика сбора еды + генерация новой еды и бомб
         if (x1 == food_x and y1 == food_y) or (x1 == food_x and y1 == food_y + 10) or\
                 (x1 == food_x + 10 and y1 == food_y) or (x1 == food_x + 10 and y1 == food_y + 10):
             food_x = round(random.randrange(snake_block, width - snake_block - 10) / 10.0) * 10.0
@@ -213,6 +226,7 @@ def gameLoop():                 #игра
                 bomb_x3 = round(random.randrange(snake_block, width - snake_block - 10) / 10.0) * 10.0
                 bomb_y3 = round(random.randrange(snake_block, height - snake_block - 10) / 10.0) * 10.0
             Length_of_snake += 1
+        # Логика пересечения с бомбами
         if (x1 == bomb_x and y1 == bomb_y) or (x1 == bomb_x and y1 == bomb_y + 10) or\
                 (x1 == bomb_x + 10 and y1 == bomb_y) or (x1 == bomb_x + 10 and y1 == bomb_y + 10):
             menu = True
